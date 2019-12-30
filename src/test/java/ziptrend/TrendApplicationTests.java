@@ -27,18 +27,15 @@ class TrendApplicationTests {
   @Autowired
   PointUnzip pointUnzip;
 
-  static Stream<Arguments> percentage1() {
-    return Stream.of(Arguments.of(200, 5), Arguments.of(200, 10), Arguments.of(200, 15),
+  static Stream<Arguments> percentage() {
+    return Stream.of(Arguments.of(200, 0), Arguments.of(200, 5), Arguments.of(200, 10),
+        Arguments.of(200, 15),
         Arguments.of(200, 20));
   }
 
-  static Stream<Arguments> percentage2() {
-    return Stream.of(Arguments.of(200, 10), Arguments.of(300, 10), Arguments.of(400, 10),
-        Arguments.of(500, 10));
-  }
 
   @ParameterizedTest(name = "change {0}/1000, burst {1}/1000")
-  @MethodSource(value = {"percentage1", "percentage2"})
+  @MethodSource(value = {"percentage"})
   void zipPointTest(int pChange, int pBurst) {
     final List<RawPoint> generated = pointGen.generate(1, Instant.now(), 24, pChange, pBurst);
     System.out.println("original size: " + generated.size());
@@ -64,10 +61,11 @@ class TrendApplicationTests {
           unzipped.getTs().truncatedTo(ChronoUnit.SECONDS));
     }
     System.out
-        .println(String.format("compression ratio: %.2f%%",
-            (generated.size() - zipped.size()) * 100.0 / zipped.size()));
+        .println(String.format("compression ratio: %.2f",
+            generated.size() * 1.0 / zipped.size()));
     System.out
-        .println(String.format("space savings: %.2f%%",
-            1 - (zipped.size()) * 100.0 / (generated.size() - zipped.size())));
+        .println(String.format("space savings: %.2f",
+            1.0 - zipped.size() * 1.0 / generated.size()));
+
   }
 }
