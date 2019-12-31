@@ -62,6 +62,6 @@ public class RawPoint {
 
   @Override
   public String toString() {
-    return id + "," + ts.toEpochMilli() + "," + val;
+    return id + "," + ts+ "," + val;
   }
 }

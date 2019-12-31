@@ -1,6 +1,10 @@
 package ziptrend;
 
+import static ziptrend.PointUtil.isQuarterSharp;
+
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -12,25 +16,29 @@ public class PointZip {
     final Stack<ZipPoint> stack = new Stack<>();
     rawPoints.forEach(
         rawPoint -> {
-          if (stack.empty()) {
+          if (stack.empty()) {// first one always put in
             stack.push(new ZipPoint(rawPoint.getId(), rawPoint.getTs(), rawPoint.getVal(), 1, 0L));
           } else {
             final ZipPoint peek = stack.peek();
-            if (peek.getVal().equals(rawPoint.getVal())) {
+            if (!isQuarterSharp(peek.getTs()) && isQuarterSharp(rawPoint
+                .getTs())) {//first of the quarter minute should be saved for query by 15 mins
+              stack.push(
+                  new ZipPoint(rawPoint.getId(), rawPoint.getTs(), rawPoint.getVal(), 1, 0L));
+            } else if (peek.getVal().equals(rawPoint.getVal())) {//may collapse into it
               if (peek.getSpan() == 0) { // peek is first of its group
                 peek.setSpan(Duration.between(peek.getTs(), rawPoint.getTs()).getSeconds());
                 peek.setMult(2);
-              } else { // already duplicated at least once
+              } else { // already collapsed at least once
                 final long l = peek.getSpan() * (peek.getMult());
                 final long between = Duration.between(peek.getTs(), rawPoint.getTs()).getSeconds();
                 if (l == between) {
                   peek.setMult(peek.getMult() + 1);
-                } else {
+                } else {// streak breaks
                   stack.push(
                       new ZipPoint(rawPoint.getId(), rawPoint.getTs(), rawPoint.getVal(), 1, 0L));
                 }
               }
-            } else {
+            } else {//value changed, new row needed
               stack.push(
                   new ZipPoint(rawPoint.getId(), rawPoint.getTs(), rawPoint.getVal(), 1, 0L));
             }
@@ -38,4 +46,5 @@ public class PointZip {
         });
     return new ArrayList<>(stack);
   }
+
 }
