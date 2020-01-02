@@ -1,21 +1,22 @@
-package ziptrend;
+package ziptrend.test;
 
+import java.time.Instant;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import java.time.Instant;
-import java.util.Objects;
+import ziptrend.ZippedPoint;
 
 @Entity
 @IdClass(PointId.class)
-public class ZipPoint {
+public class ZippedPointEntity implements ZippedPoint {
   @Id private Long id;
   @Id private Instant ts;
   private Integer val;
   private Integer mult = 1; // default just itself
   private Long span = 0L; // default  just itself
 
-  public ZipPoint(
+  public ZippedPointEntity(
       final Long id, final Instant ts, final Integer val, final Integer mult, final Long span) {
     this.id = id;
     this.ts = ts;
@@ -24,7 +25,7 @@ public class ZipPoint {
     this.span = span;
   }
 
-  public ZipPoint() {}
+  public ZippedPointEntity() {}
 
   public Long getId() {
     return id;
@@ -34,6 +35,7 @@ public class ZipPoint {
     this.id = id;
   }
 
+  @Override
   public Instant getTs() {
     return ts;
   }
@@ -42,6 +44,7 @@ public class ZipPoint {
     this.ts = ts;
   }
 
+  @Override
   public Integer getVal() {
     return val;
   }
@@ -50,6 +53,7 @@ public class ZipPoint {
     this.val = val;
   }
 
+  @Override
   public Integer getMult() {
     return mult;
   }
@@ -58,6 +62,7 @@ public class ZipPoint {
     this.mult = mult;
   }
 
+  @Override
   public Long getSpan() {
     return span;
   }
@@ -68,14 +73,18 @@ public class ZipPoint {
 
   @Override
   public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    final ZipPoint zipPoint = (ZipPoint) o;
-    return Objects.equals(id, zipPoint.id)
-        && Objects.equals(ts, zipPoint.ts)
-        && Objects.equals(val, zipPoint.val)
-        && Objects.equals(mult, zipPoint.mult)
-        && Objects.equals(span, zipPoint.span);
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final ZippedPointEntity zippedPointEntity = (ZippedPointEntity) o;
+    return Objects.equals(id, zippedPointEntity.id)
+        && Objects.equals(ts, zippedPointEntity.ts)
+        && Objects.equals(val, zippedPointEntity.val)
+        && Objects.equals(mult, zippedPointEntity.mult)
+        && Objects.equals(span, zippedPointEntity.span);
   }
 
   @Override

@@ -1,4 +1,4 @@
-package ziptrend;
+package ziptrend.test;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -34,8 +34,12 @@ public class PointId implements Serializable {
 
   @Override
   public boolean equals(final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     final PointId pointId = (PointId) o;
     return Objects.equals(id, pointId.id) && Objects.equals(ts, pointId.ts);
   }

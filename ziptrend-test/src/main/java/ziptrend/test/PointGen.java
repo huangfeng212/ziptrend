@@ -1,4 +1,4 @@
-package ziptrend;
+package ziptrend.test;
 
 import com.google.common.base.Preconditions;
 import java.time.Instant;
@@ -13,17 +13,21 @@ public class PointGen {
 
   public static final int P_TRUE = 1000;
   //  public static final int P_CHANGE = 200;
-//  public static final int P_BURST = 5;
-  public static final int P_MISSING = 1;//No need to support really, it's just zipping tool
+  //  public static final int P_BURST = 5;
+  public static final int P_MISSING = 1; // No need to support really, it's just zipping tool
   public static final int D_CHANGE = 2;
   public static final int D_INIT = 0;
 
-  public List<RawPoint> generate(final long pointId, final Instant start, final int hours,
-      int pChange, int pBurst) {
+  public List<UnzippedPointEntity> generate(
+      final long pointId,
+      final Instant start,
+      final int hours,
+      final int pChange,
+      final int pBurst) {
     Preconditions.checkArgument(hours > 0);
     final Random random = new Random();
-    final int[] int0 = new int[]{D_INIT};
-    final List<RawPoint> pointEntities = new ArrayList<>();
+    final int[] int0 = new int[] {D_INIT};
+    final List<UnzippedPointEntity> pointEntities = new ArrayList<>();
     for (int hour = 0; hour < hours; hour++) {
       for (int minute = 0; minute < 60; minute++) {
         // minute data
@@ -38,7 +42,7 @@ public class PointGen {
           }
         }
         pointEntities.add(
-            new RawPoint(
+            new UnzippedPointEntity(
                 pointId, start.plus(hour * 3600 + minute * 60, ChronoUnit.SECONDS), int0[0]));
         // second data (burst)
         for (int second = 1; second < 60; second++) {
@@ -52,7 +56,7 @@ public class PointGen {
               int0[0] -= change;
             }
             pointEntities.add(
-                new RawPoint(
+                new UnzippedPointEntity(
                     pointId,
                     start.plus(hour * 3600 + minute * 60 + second, ChronoUnit.SECONDS),
                     int0[0]));
